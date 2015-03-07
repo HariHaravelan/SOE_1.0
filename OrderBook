@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace SOE
+{
+    class OrderBook
+    {
+
+        Dictionary<string, List<Transaction>> dictOrderBook = new Dictionary<string, List<Transaction>>(StringComparer.InvariantCultureIgnoreCase);
+
+        public void Execute(StockOrder stockorder)
+        {
+            List<Transaction> transactions = new List<Transaction>();
+            Transaction transaction;
+
+            if (dictOrderBook.ContainsKey(stockorder.CompanyName))
+            {
+                UpdateOrders(stockorder);
+
+            }
+            else
+            {
+                transaction = new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, stockorder.Stocks, Constants.Open);
+                transactions.Add(transaction);
+                WriteLog(transaction.ToString());
+                dictOrderBook[stockorder.CompanyName] = transactions;
+            }
+        }
+
+
+
+        private void UpdateOrders(StockOrder stockorder)
+        {
+            int _remainingstocks = 0;
+
+            List<Transaction> _transactions = dictOrderBook[stockorder.CompanyName];
+            Transaction _newtransaction;
+
+            Transaction _transaction = _transactions[0];
+            if (_transaction.Side != stockorder.Side)
+            {
+
+
+                _remainingstocks = _transaction.RemainingQuantity - stockorder.Stocks;
+
+                if (_remainingstocks > 0)
+                {
+                    _transaction.RemainingQuantity = _remainingstocks;
+                    WriteLog(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, 0, Constants.Closed).ToString());
+                    WriteLog(_transaction.ToString());
+                }
+                else if (_remainingstocks < 0)
+                {
+                    _newtransaction = new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, Math.Abs(_remainingstocks), Constants.Open);                    
+                    _transactions.Remove(_transaction);                    
+                    _transactions.Add(_newtransaction);
+                    WriteLog(new Transaction(_transaction.Side, _transaction.CompanyName, _transaction.Quantity, 0, Constants.Closed).ToString());
+                    WriteLog(_newtransaction.ToString());
+                }
+                else
+                {
+                    _transactions.Remove(_transaction);
+                    WriteLog(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, 0, Constants.Closed).ToString());
+                    WriteLog(new Transaction(_transaction.Side, _transaction.CompanyName, _transaction.Quantity, 0, Constants.Closed).ToString());
+                }
+
+            }
+            else
+            {
+
+                _transaction.Quantity += stockorder.Stocks;
+                _transaction.RemainingQuantity += stockorder.Stocks;
+                Console.WriteLine(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, stockorder.Stocks, Constants.Open).ToString());
+            }
+
+
+
+        }
+
+        private void WriteLog(string _log)
+        {
+            Console.WriteLine(_log);
+        }
+
+    }
+}
