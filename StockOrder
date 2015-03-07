@@ -1,0 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace SOE
+{
+    class StockOrder
+    {
+        public string Side { get; set; }
+        public string CompanyName { get; set; }
+        public int Stocks { get; set; }
+
+        private OrderBook orderbook;
+
+        public StockOrder()
+        { 
+        
+        }
+
+
+        public StockOrder(string Side, string CompanyName, int Stocks, OrderBook orderbook)
+        {
+            this.Side = Side;
+            this.CompanyName = CompanyName;
+            this.Stocks = Stocks;
+            this.orderbook = orderbook;
+        }
+
+
+        public void Execute()
+        {
+            orderbook.Execute(this);
+        }
+    }
+}
