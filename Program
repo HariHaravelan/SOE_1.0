@@ -1,0 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SOE
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Enter Number of Transactions \n");
+            int nooftransactions = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("\nInput Format 'Side Company Quantity' \n");
+            List<StockOrder> stockorders = new List<StockOrder>();
+            OrderBook orderbook = new OrderBook();
+
+            for (int i = 0; i < nooftransactions; i++)
+            {
+                string input = Console.ReadLine();
+
+                string[] arrInput = input.Split(' ');  //Input String should have space after the every value entry 
+                stockorders.Add(new StockOrder(arrInput[0],arrInput[1],Convert.ToInt32(arrInput[2]),orderbook));
+            }
+
+            foreach(StockOrder stockorder in stockorders)
+            {
+                stockorder.Execute();
+            }
+            Console.ReadLine();
+
+
+        }
+    }
+}
