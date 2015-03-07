@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace SOE
+{
+    class Transaction
+    {
+        public string Side { get; set; }
+        public string CompanyName { get; set; }
+        public int Quantity { get; set; }
+        public int RemainingQuantity { get; set; }
+        public string Status { get; set; }
+
+
+
+        public Transaction(string Side, string CompanyName, int Quantity, int RemainingQuantity, string Status)
+        {
+          
+            this.Side = Side;
+            this.CompanyName = CompanyName;
+            this.Quantity = Quantity;
+            this.RemainingQuantity = RemainingQuantity;
+            this.Status = Status;
+        }
+
+
+        public override string ToString()
+        {
+            return "\n"+Side + "\t" + CompanyName + "\t" + Quantity + "\t" + RemainingQuantity + "\t" + Status;
+        }
+
+    }
+}
