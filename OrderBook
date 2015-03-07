@@ -61,9 +61,9 @@ namespace SOE
                 }
                 else
                 {
-                    _transaction = null;
                     WriteLog(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, 0, Constants.Closed).ToString());
                     WriteLog(new Transaction(_transaction.Side, _transaction.CompanyName, _transaction.Quantity, 0, Constants.Closed).ToString());
+                    dictOrderBook.Remove(_transaction.CompanyName);
                 }
 
             }
