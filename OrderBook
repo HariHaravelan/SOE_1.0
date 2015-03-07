@@ -8,11 +8,11 @@ namespace SOE
     class OrderBook
     {
 
-        Dictionary<string, List<Transaction>> dictOrderBook = new Dictionary<string, List<Transaction>>(StringComparer.InvariantCultureIgnoreCase);
+        Dictionary<string, Transaction> dictOrderBook = new Dictionary<string, Transaction>(StringComparer.InvariantCultureIgnoreCase);
 
         public void Execute(StockOrder stockorder)
         {
-            List<Transaction> transactions = new List<Transaction>();
+            
             Transaction transaction;
 
             if (dictOrderBook.ContainsKey(stockorder.CompanyName))
@@ -23,9 +23,9 @@ namespace SOE
             else
             {
                 transaction = new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, stockorder.Stocks, Constants.Open);
-                transactions.Add(transaction);
+               
                 WriteLog(transaction.ToString());
-                dictOrderBook[stockorder.CompanyName] = transactions;
+                dictOrderBook[stockorder.CompanyName] = transaction;
             }
         }
 
@@ -35,10 +35,10 @@ namespace SOE
         {
             int _remainingstocks = 0;
 
-            List<Transaction> _transactions = dictOrderBook[stockorder.CompanyName];
-            Transaction _newtransaction;
+            Transaction _transaction = dictOrderBook[stockorder.CompanyName];
+           
 
-            Transaction _transaction = _transactions[0];
+             
             if (_transaction.Side != stockorder.Side)
             {
 
@@ -53,15 +53,15 @@ namespace SOE
                 }
                 else if (_remainingstocks < 0)
                 {
-                    _newtransaction = new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, Math.Abs(_remainingstocks), Constants.Open);                    
-                    _transactions.Remove(_transaction);                    
-                    _transactions.Add(_newtransaction);
                     WriteLog(new Transaction(_transaction.Side, _transaction.CompanyName, _transaction.Quantity, 0, Constants.Closed).ToString());
-                    WriteLog(_newtransaction.ToString());
+
+                    _transaction = new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, Math.Abs(_remainingstocks), Constants.Open);
+                    
+                    WriteLog(_transaction.ToString());
                 }
                 else
                 {
-                    _transactions.Remove(_transaction);
+                    _transaction = null;
                     WriteLog(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, 0, Constants.Closed).ToString());
                     WriteLog(new Transaction(_transaction.Side, _transaction.CompanyName, _transaction.Quantity, 0, Constants.Closed).ToString());
                 }
@@ -72,7 +72,7 @@ namespace SOE
 
                 _transaction.Quantity += stockorder.Stocks;
                 _transaction.RemainingQuantity += stockorder.Stocks;
-                Console.WriteLine(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, stockorder.Stocks, Constants.Open).ToString());
+                WriteLog(new Transaction(stockorder.Side, stockorder.CompanyName, stockorder.Stocks, stockorder.Stocks, Constants.Open).ToString());
             }
 
 
